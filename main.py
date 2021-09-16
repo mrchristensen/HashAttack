@@ -3,7 +3,7 @@ import hashlib
 
 
 def my_sha_1(string_to_hash, num_bits):
-    digest = hashlib.sha1(string_to_hash.encode('utf-8')).hexdigest()[0:num_bits/8]
+    digest = hashlib.sha1(string_to_hash.encode('utf-8')).hexdigest()
     digest_truncated = digest  # todo: truncate the digest to the num of bits
     return digest_truncated
 
