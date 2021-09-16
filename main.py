@@ -18,17 +18,30 @@ def my_sha_1(string_to_hash, num_bits):  # https://www.kite.com/python/examples/
 
 
 def collision_attack(num_bits):
-    hashes = set()
     attempts = 0
+    hashes = set()
 
     while True:
-        attempts += 1
         hash = my_sha_1(random_word(), num_bits)
 
         if hashes.__contains__(hash):
             return attempts
         else:
             hashes.add(hash)
+            attempts += 1
+
+
+def pre_image_attack(num_bits):
+    attempts = 0
+    hash = my_sha_1(random_word(), num_bits)
+
+    while True:
+        attempts += 1
+
+        new_hash = my_sha_1(random_word(), num_bits)
+
+        if hash == new_hash:
+            return attempts
 
 
 if __name__ == '__main__':
@@ -36,4 +49,5 @@ if __name__ == '__main__':
     # num_bits = int(input("Num bits: "))
 
     # print(my_sha_1(string_to_hash, num_bits))
-    print(collision_attack(12))
+    # print(collision_attack(12))
+    print(pre_image_attack(12))
