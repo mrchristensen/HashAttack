@@ -7,7 +7,7 @@ import seaborn as sns
 
 # num_of_bits_for_tests = {8, 12, 16, 24, 32}
 # num_of_bits_for_tests = [8, 12, 16, 24, 32]
-num_of_bits_for_tests = [8, 12, 16]
+num_of_bits_for_tests = [8, 10, 16, 20, 24]
 num_of_test_iter = 100
 
 
@@ -55,7 +55,7 @@ def run_collision_attack_test():
               f'\nLargest Value: {max(num_attempts)}'
               f'\nSmallest Value: {min(num_attempts)}\n\n')
 
-    make_line_plot(results, "PlotCol", 34, "Average Attempts for Collision Attack")
+    make_line_plot(results, "PlotCol", 34, "Average Attempts for Collision Attack", "collision")
 
     make_box_plot(results, "BoxCol", "Variation in Attempts for Collision Attack")
 
@@ -76,7 +76,7 @@ def make_box_plot(results, filename, title):
     plt.show()
 
 
-def make_line_plot(results, filename, max, title):
+def make_line_plot(results, filename, max, title, mode):
     x = []
     y = []
     for num_bits in results:
@@ -84,8 +84,14 @@ def make_line_plot(results, filename, max, title):
         y.append(sum(results[num_bits]) / len(results[num_bits]))
     plt.plot(x, y, linestyle='None', marker="o")
     x = np.linspace(6, max, 100)
-    y = 2 ** (x / 2)
-    plt.plot(x, y, 'r')
+
+    y_equation = None
+    if mode == "collision":
+        y_equation = 2 ** (x / 2)
+    else:
+        y_equation = 2 ** x
+
+    plt.plot(x, y_equation, 'r')
     plt.title(title)
     plt.xlabel("Number of Bytes")
     plt.ylabel("Attempts")
@@ -115,7 +121,7 @@ def run_pre_image_attack_test():
         num_attempts = set()
 
         for i in range(num_of_test_iter):
-            # print(f'i: {i}')
+            print(f'i: {i}')
             num_attempts.add(pre_image_attack(num_bits))
 
         results[num_bits] = num_attempts
@@ -125,7 +131,8 @@ def run_pre_image_attack_test():
               f'\nLargest Value: {max(num_attempts)}'
               f'\nSmallest Value: {min(num_attempts)}\n\n')
 
-    # Todo: make pretty charts and stuff from results
+    make_line_plot(results, "PlotPre", 26, "Average Attempts for Pre-Image Attack", "pre-image")
+    make_box_plot(results, "BoxPre", "Variation in Attempts for Pre-Image Attack")
 
 
 
@@ -137,4 +144,4 @@ if __name__ == '__main__':
     # print(collision_attack(32))
     # print(pre_image_attack(12))
     # run_pre_image_attack_test()
-    run_collision_attack_test()
+    run_pre_image_attack_test()
