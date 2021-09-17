@@ -6,8 +6,8 @@ import numpy as np
 import seaborn as sns
 
 # num_of_bits_for_tests = {8, 12, 16, 24, 32}
-num_of_bits_for_tests = [8, 12, 16, 24, 32]
-# num_of_bits_for_tests = [8, 12, 16]
+# num_of_bits_for_tests = [8, 12, 16, 24, 32]
+num_of_bits_for_tests = [8, 12, 16]
 num_of_test_iter = 100
 
 
@@ -55,43 +55,43 @@ def run_collision_attack_test():
               f'\nLargest Value: {max(num_attempts)}'
               f'\nSmallest Value: {min(num_attempts)}\n\n')
 
+    make_line_plot(results, "PlotCol", 34, "Average Attempts for Collision Attack")
+
+    make_box_plot(results, "BoxCol", "Variation in Attempts for Collision Attack")
+
+
+def make_box_plot(results, filename, title):
     x = []
     y = []
-
-    for num_bits in results:
-        x.append(num_bits)
-        y.append(sum(results[num_bits]) / len(results[num_bits]))
-
-    plt.plot(x, y, linestyle='None', marker="o")
-
-    x = np.linspace(6, 34, 100)
-    y = 2 ** (x / 2)
-    plt.plot(x, y, 'r')
-
-    plt.title("Average Attempts for Collision Attack")
-    plt.xlabel("Number of Bytes")
-    plt.ylabel("Attempts")
-    plt.yscale("log")
-    plt.savefig('PlotCol.png', bbox_inches='tight')
-    plt.show()
-
-    x = []
-    y = []
-
     for num_bits in results:
         for num in results[num_bits]:
             x.append(num_bits)
             y.append(num)
-
     sns.boxplot(x, y)
-
-    plt.title("Variation in Attempts for Collision Attack")
+    plt.title(title)
     plt.xlabel("Number of Bytes")
     plt.ylabel("Attempts")
     plt.yscale("log")
-    plt.savefig('BoxCol.png', bbox_inches='tight')
+    plt.savefig(f'{filename}.png', bbox_inches='tight')
     plt.show()
 
+
+def make_line_plot(results, filename, max, title):
+    x = []
+    y = []
+    for num_bits in results:
+        x.append(num_bits)
+        y.append(sum(results[num_bits]) / len(results[num_bits]))
+    plt.plot(x, y, linestyle='None', marker="o")
+    x = np.linspace(6, max, 100)
+    y = 2 ** (x / 2)
+    plt.plot(x, y, 'r')
+    plt.title(title)
+    plt.xlabel("Number of Bytes")
+    plt.ylabel("Attempts")
+    plt.yscale("log")
+    plt.savefig(f'{filename}.png', bbox_inches='tight')
+    plt.show()
 
 
 def pre_image_attack(num_bits):
