@@ -6,8 +6,10 @@ import numpy as np
 import seaborn as sns
 
 # num_of_bits_for_tests = [8, 12, 16, 24, 32]
-num_of_bits_for_tests = [8, 10, 16, 20, 24]
-num_of_test_iter = 100
+# num_of_bits_for_tests = [8, 10, 16, 20, 24]
+num_of_bits_for_tests = [8, 10, 16, 20]
+# num_of_bits_for_tests = [8, 10]
+num_of_test_iter = 50
 
 
 def make_box_plot(results, filename, title):
@@ -51,15 +53,13 @@ def make_line_plot(results, filename, max, title, mode):
 
 
 def random_word():
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(16))
+    letters = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    return ''.join(random.choice(letters) for i in range(40))
 
 
 def my_sha_1(string_to_hash, num_bits):  # https://www.kite.com/python/examples/3150/hashlib-construct-a-sha1-hash
-    hex_digest = hashlib.sha1(string_to_hash.encode('utf-8')).hexdigest()
-    bin_digest = bin(int(hex_digest, base=16)).lstrip('0b')
-    digest_truncated = bin_digest[0:num_bits]
-    return digest_truncated
+    digest = hashlib.sha1(string_to_hash.encode('utf-8')).digest()
+    return int.from_bytes(digest, "big") >> (20*8 - num_bits)
 
 
 def run_collision_attack_test():
@@ -80,8 +80,7 @@ def run_collision_attack_test():
               f'\nLargest Value: {max(num_attempts)}'
               f'\nSmallest Value: {min(num_attempts)}\n\n')
 
-    make_line_plot(results, "PlotCol", 34, "Average Attempts for Collision Attack", "collision")
-
+    make_line_plot(results, "PlotCol", 26, "Average Attempts for Collision Attack", "collision")
     make_box_plot(results, "BoxCol", "Variation in Attempts for Collision Attack")
 
 
@@ -114,7 +113,7 @@ def collision_attack(num_bits):
     while True:
         hash = my_sha_1(random_word(), num_bits)
 
-        if hashes.__contains__(hash):
+        if hash in hashes:
             return attempts
         else:
             hashes.add(hash)
@@ -135,5 +134,5 @@ def pre_image_attack(num_bits):
 
 
 if __name__ == '__main__':
-    run_pre_image_attack_test()
+    run_collision_attack_test()
     run_pre_image_attack_test()
